@@ -6,37 +6,6 @@ from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import shutil
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='[%(levelname)s] %(message)s'
-)
-
-# Diccionario que mapea el año de ENAHO al código correspondiente y la variable year.
-YEAR_MAP = {
-    "2023": {"codigo": 906, "year": 2023},
-    "2022": {"codigo": 784, "year": 2022},
-    "2021": {"codigo": 759, "year": 2021},
-    "2020": {"codigo": 737, "year": 2020},
-    "2019": {"codigo": 687, "year": 2019},
-    "2018": {"codigo": 634, "year": 2018},
-    "2017": {"codigo": 603, "year": 2017},
-    "2016": {"codigo": 546, "year": 2016},
-    "2015": {"codigo": 498, "year": 2015},
-    "2014": {"codigo": 440, "year": 2014},
-    "2013": {"codigo": 404, "year": 2013},
-    "2012": {"codigo": 324, "year": 2012},
-    "2011": {"codigo": 291, "year": 2011},
-    "2010": {"codigo": 279, "year": 2010},
-    "2009": {"codigo": 285, "year": 2009},
-    "2008": {"codigo": 284, "year": 2008},
-    "2007": {"codigo": 283, "year": 2007},
-    "2006": {"codigo": 282, "year": 2006},
-    "2005": {"codigo": 281, "year": 2005},
-    "2004": {"codigo": 280, "year": 2004},
-}
-
-
-
 def enahodata(
     modulos: list[str],
     anios: list[str],
