@@ -110,7 +110,7 @@ def _download_and_extract_one(
                             # Recorrer la carpeta extraída para buscar .dta
                             for root, dirs, files in os.walk(extract_dir):
                                 for file in files:
-                                    if file.lower().endswith(".dta"):
+                                    if file.lower().endswith(".dbf"):
                                         source_file = os.path.join(root, file)
                                         shutil.copy2(source_file, dta_dir)
                             

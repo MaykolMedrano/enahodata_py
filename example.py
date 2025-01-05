@@ -15,32 +15,33 @@ import os
 os.chdir('E:\otrosTrabajosSTATA-practicas\proyectStataToGitHub\pruebas')
 ### Múltiples módulos y años
 
-enahodata(
-  modulos=["01","02","03"],
-  anios=["2022","2023"],
-  descomprimir=True,
-  only_dta=True,
-  overwrite=True, 
-  output_dir="datos_ENAHO"
-)
+# enapresdata(
+#   modulos=["1727","1728","1729"],
+#   anios=["2022"],
+#   descomprimir=True,
+#   only_dta=True,
+#   overwrite=True, 
+#   output_dir="datos_ENAPRES"
+# )
 
-enapresdata(
-  modulos=["1815","1816","1817"],
-  anios=["2022","2023"],
-  descomprimir=True,
-  only_dta=True,
-  overwrite=True, 
-  output_dir="datos_ENAPRES"
-)
 
-endesdata(
-  modulos=["1629","1630","1631"],
-  anios=["2022","2023"],
-  descomprimir=True,
-  only_dta=True,
-  overwrite=True, 
-  output_dir="datos_ENDES"
-)
+# endesdata(
+#   modulos=["01","02","03"],
+#   anios=["2006"],
+#   descomprimir=True,
+#   only_dta=True,
+#   overwrite=True, 
+#   output_dir="datos_ENAHO"
+# )
+
+# enahodata(
+#   modulos=["01","02","03"],
+#   anios=["2004", "2005"],
+#   descomprimir=True,
+#   only_dta=True,
+#   overwrite=True, 
+#   output_dir="datos_ENAHO"
+# )
 
   ### Descargas en paralelo
 # enahodata(
