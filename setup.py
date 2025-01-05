@@ -20,8 +20,12 @@ setuptools.setup(
     url="https://github.com/MaykolMedrano/enahodata2",
     packages=setuptools.find_packages(),
     classifiers=[
-        "Programming Language :: Python :: 3.11.0"
+        "Programming Language :: Python :: 3.11.0",
+        "Operating System :: Microsoft :: Windows :: Windows 10",
+        "Intended Audience :: Education",
+        "License :: MIT License",
     ],
     install_requires=install_requires,
+    keywords=['Perú', 'Peru', 'inei', 'enaho', 'endes', 'epen', 'enapres'], 
     python_requires=">3.11",    
 )

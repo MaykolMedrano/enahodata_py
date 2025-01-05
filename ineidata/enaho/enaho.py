@@ -11,7 +11,8 @@ logging.basicConfig(
     format='[%(levelname)s] %(message)s'
 )
 
-# Diccionario que mapea el año de ENAHO al código correspondiente y la variable year.
+# DICCIONARIO DE AÑOS Y CODIGOS DE LA ENAHO
+# -----------------------------------------
 YEAR_MAP = {
     "2023": {"codigo": 906, "year": 2023},
     "2022": {"codigo": 784, "year": 2022},
@@ -202,3 +203,13 @@ def enahodata(
             )
 
 
+# os.chdir('E:\otrosTrabajosSTATA-practicas\proyectStataToGitHub\pruebas')
+# ### Múltiples módulos y años
+# enahodata(
+#   modulos=["01","02","03"],
+#   anios=["2022","2023"],
+#   descomprimir=True,
+#   only_dta=True,
+#   overwrite=True, 
+#   output_dir="datos_ENAHO"
+# )
