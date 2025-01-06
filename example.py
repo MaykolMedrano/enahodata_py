@@ -1,4 +1,4 @@
-from enaho.enahodata import enahodata
+from enahodata import enahodata2
 import os
 
 ## Características
@@ -12,7 +12,7 @@ import os
 os.chdir('E:\otrosTrabajosSTATA-practicas\proyectStataToGitHub\pruebas')
 ### Múltiples módulos y años
 
-enahodata(
+enahodata2(
   modulos=["01","02","03"],
   anios=["2004", "2005"],
   descomprimir=True,

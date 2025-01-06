@@ -1,7 +1,12 @@
+import pathlib
 import setuptools
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
+# The directory containing this file
+HERE = pathlib.Path(__file__).parent
+
+# The text of the README file
+README = (HERE / "README.md").read_text()
+
 
 setuptools.setup(
     name="enahodata",
@@ -9,9 +14,10 @@ setuptools.setup(
     author="Maykol Medrano Cahuana & Jelsin Stalin Palomino Huaytapuma",
     author_email="maykolmedrano35@gmail.com & jstpalomino@hotmail.com",
     description="Library that automates the download of the modules of the National Household Survey (ENAHO in spanish) conducted by the National Institute of Statistics and Informatics of Peru each year.",
-    long_description=long_description,
+    long_description=README,
     long_description_content_type="text/markdown",
     url="https://github.com/MaykolMedrano/enahodata2",
+    license="MIT",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3.11.0",
@@ -21,5 +27,4 @@ setuptools.setup(
     ],
     install_requires=["requests", "tqdm"],
     keywords=['Perú', 'Peru', 'inei', 'enaho'], 
-    python_requires=">3.11",    
 )

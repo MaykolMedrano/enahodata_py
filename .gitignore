@@ -3,6 +3,11 @@ cache/
 mapboxkey.py
 outputs/
 
+# Others Files
+dist
+enahodata.egg-info
+example.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
