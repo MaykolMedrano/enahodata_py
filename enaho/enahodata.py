@@ -201,15 +201,3 @@ def enahodata(
                 verbose=verbose,
                 only_dta=only_dta
             )
-
-
-# os.chdir('E:\otrosTrabajosSTATA-practicas\proyectStataToGitHub\pruebas')
-# ### Múltiples módulos y años
-# enahodata(
-#   modulos=["01","02","03"],
-#   anios=["2022","2023"],
-#   descomprimir=True,
-#   only_dta=True,
-#   overwrite=True, 
-#   output_dir="datos_ENAHO"
-# )
