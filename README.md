@@ -7,6 +7,8 @@ Esta libreria consta de un comando para extraer datos de la Encuesta Nacional de
 
 Los modulos son los siguientes:
 
+#### Corte transversal
+
 Nro|Código Módulo|Modulo|Preguntas
 :-------|:-------|:---------|:------
 1|`01`|Características de la Vivienda y del Hogar|<a href="https://proyectos.inei.gob.pe/microdatos/Detalle_Encuesta.asp?CU=19558&CodEncuesta=906&CodModulo=01&NombreEncuesta=Condiciones+de+Vida+y+Pobreza+-+ENAHO&NombreModulo=Características+de+la+Vivienda+y+del+Hogar" target="_blank">`Preguntas`</a>
@@ -40,6 +42,22 @@ Nro|Código Módulo|Modulo|Preguntas
 29|`85`|Gobernabilidad, Democracia y Transparencia|<a href="https://proyectos.inei.gob.pe/microdatos/Detalle_Encuesta.asp?CU=19558&CodEncuesta=906&CodModulo=85&NombreEncuesta=Condiciones+de+Vida+y+Pobreza+-+ENAHO&NombreModulo=Gobernabilidad,+Democracia+y+Transparencia" target="_blank">`Preguntas`</a>
 30|`1825`|Beneficiarios de Instituciones sin fines de lucro: Olla comun|<a href="https://proyectos.inei.gob.pe/microdatos/Detalle_Encuesta.asp?CU=19558&CodEncuesta=906&CodModulo=1825&NombreEncuesta=Condiciones+de+Vida+y+Pobreza+-+ENAHO&NombreModulo=Beneficiarios+de+Instituciones+sin+fines+de+lucro:+Olla+Común" target="_blank">`Preguntas`</a>
 
+#### Datos de panel
+
+Nro|Año|Código Módulo|Modulo
+:-------|:-------|:-------|:---------
+1|2023-2018|`1474`|Características de la Vivienda y del Hogar
+2|2023-2018|`1475`|Educación
+3|2023-2018|`1476`|Salud
+4|2023-2018|`1477`|Empleo e Ingresos
+5|2023-2018|`1478`|Sumarias ( Variables Calculadas )
+6|2023-2018|`1479`|Características de los Miembros del Hogar
+7|2017-2011|`01`|Características de la Vivienda y del Hogar	
+8|2017-2011|`03`|Educación
+9|2017-2011|`04`|Salud
+10|2017-2011|`05`|Empleo e Ingresos
+11|2017-2011|`34`|Sumarias( Variables calculadas )
+12|2017-2011|`1314`|Características de los Miembros del Hogar
 ## I. Instalacion
 
 #### Requerimientos
@@ -58,11 +76,11 @@ pip install enahodata
 #### 1.- Importamos la libreria
 
 ```python
-from enahodata import enahodata2 
+from enahodata import enahodata 
 import os
 ```
 
-- En esta etapa importamos las librerias que se usaran, **enahodata** para extraer el comando **enahodata2**.
+- En esta etapa importamos las librerias que se usaran, **enahodata** para extraer el comando **enahodata**.
 - También importamos **os** para manejar las carpetas.
 
 #### 2.- Definimos el directorio de trabajo
@@ -71,21 +89,22 @@ os.chdir("/path/to/your/directory")
 ```
 - Usamos este código para definir el directorio de trabajo donde se trabajará.
 
-#### 3.- Definimos los paramétros del comando **_enahodata2_**
-El comando es enahodata2, y tiene los siguientes parametros:
+#### 3.- Definimos los paramétros del comando **_enahodata_**
+El comando es enahodata, y tiene los siguientes parametros:
 ```python
-enahodata2(
+enahodata(
     modulos: list[str]=["", "", "", ...],
     anios: list[str]=["", "", "", ...],
     descomprimir: bool = False,
     only_dta: bool = False
     overwrite: bool = False,
     output_dir: str = "NOMBRE_CARPETA",   
+    panel: bool = True or False
 )
 ```
 - **modulos:** en este parámetro ponemos la lista de modulos que se quiere descargar. Se puede extraer el codigo de la columna _Código Módulo_.
 ```python
-enahodata2(
+enahodata(
     modulos = ["01", "02", "03",...],
     ... 
 )
@@ -93,7 +112,7 @@ enahodata2(
 
 - **anios:** en este parámetro se pone la lista de años.
 ```python
-enahodata2(
+enahodata(
     ...
     anios = ["2020", "2021", "2022",...]
     ...
@@ -101,7 +120,7 @@ enahodata2(
 ```
 - **descomprimir:** con esta opción se selecciona _True_ o _False_ para que se descomprima o no, respectivamente.
 ```python
-enahodata2(
+enahodata(
     ...
     descomprimir:bool = ...,
     ...
@@ -109,7 +128,7 @@ enahodata2(
 ```
 - **only_data:** con este parametro del comando seleccionamos si se enfocara solo en los archivos _.dta_ o no. Tiene dos valores _True_ o _False_.
 ```python
-enahodata2(
+enahodata(
     ...
     only_dta: bool = ...,
     ...
@@ -117,7 +136,7 @@ enahodata2(
 ```
 - **overwrite:** con esta opción se indica si se reemplaza los archivos ya existentes o no. Tiene dos valores _True_ o _False_.
 ```python
-enahodata2(
+enahodata(
     ...
     overwrite: bool = ...,
     ...
@@ -125,9 +144,17 @@ enahodata2(
 ```
 - **output_dir:** con este parámetro se indica el nombre que tendra la carpeta donde se almacenaran los archivos de los modulos descargados de la ENAHO. 
 ```python
-enahodata2(
+enahodata(
     ...
     output_dir: str = "NOMBRE_CARPETA",   
+)
+```
+
+- **panel:** con este parámetro se indica si se descargará los datasets de corte transversal o los de panel data. Tiene dos valores _True_ (datos de panel) y _False_ (corte transversal). 
+```python
+enahodata(
+    ...
+    panel: bool = ...,   
 )
 ```
 
@@ -135,18 +162,19 @@ enahodata2(
 #### 4.- Plantilla completa
 
 ```python
-from enahodata import enahodata2 
+from enahodata import enahodata 
 import os
 
 os.chdir("/path/to/your/directory")
 
-enahodata2(
+enahodata(
     modulos = ["01", "02", "03",...],,
     anios = list[str],
     descomprimir = ...,
     only_dta = ...,
     overwrite = ...,
     output_dir = "NOMBRE_CARPETA",   
+    panel = ...,
 )
 
 ```
@@ -169,18 +197,19 @@ pip install enahodata
 ```
 En otro archivo `ejemplo.py`, por ejemplo escribimos el siguiente código:
 ```python
-from enahodata import enahodata2
+from enahodata import enahodata
 import os
 
 os.chdir("C:\Users\Usuario\Desktop\ejemplo")
 
-enahodata2(
+enahodata(
   modulos=["01","03","04"],
   anios=["2022", "2023"],
   descomprimir=True,
   only_dta=True,
   overwrite=True, 
-  output_dir="datos_ENAHO"
+  output_dir="datos_ENAHO",
+  panel=False 
 )
 
 ```
@@ -211,6 +240,10 @@ Donde:
 - **/modulo_04_2023_extract** 
 
 >En estas carpetas se encuentran, la información descomprimida de la ENAHO, con toda la información que viene desde el portal de microdatos del INEI.
+
+### Nota
+- Cuando se active la opción `panel=True`, tener en cuenta que los datasets tienen un peso considerable. El proceso sera el mismo, la diferencia se encuentra en el tamaño de los archivos que se descarán.
+- Otro aspecto a tener en cuenta, los códigos a usar para la función debe ser los que pertenecen a la tabla de datos de panel, considerando el periodo de tiempo que son vigentes los codigos a usar.
 
 ## Licencia
 

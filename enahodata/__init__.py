@@ -1,1 +1,1 @@
-from .enahodata import enahodata2
+from .enahodata import enahodata
