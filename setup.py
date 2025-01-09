@@ -10,7 +10,7 @@ README = (HERE / "README.md").read_text()
 
 setuptools.setup(
     name="enahodata",
-    version="0.0.1",  # This will be replaced with the commit tag
+    version="0.0.2",  
     author="Maykol Medrano Cahuana & Jelsin Stalin Palomino Huaytapuma",
     author_email="maykolmedrano35@gmail.com & jstpalomino@hotmail.com",
     description="Library that automates the download of the modules of the National Household Survey (ENAHO in spanish) conducted by the National Institute of Statistics and Informatics of Peru each year.",
@@ -20,11 +20,10 @@ setuptools.setup(
     license="MIT",
     packages=setuptools.find_packages(),
     classifiers=[
-        "Programming Language :: Python :: 3.11.0",
-        "Operating System :: Microsoft :: Windows :: Windows 10",
+        "Programming Language :: Python",
+        "Operating System :: Microsoft ",
         "Intended Audience :: Education",
-        "License :: MIT License",
     ],
     install_requires=["requests", "tqdm"],
-    keywords=['Perú', 'Peru', 'inei', 'enaho'], 
+    keywords=['Perú', 'Peru', 'inei', 'enaho', 'microdatos'], 
 )
