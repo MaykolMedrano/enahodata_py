@@ -1,7 +1,18 @@
 # ENAHODATA
 Esta libreria consta de un comando para extraer datos de la Encuesta Nacional de Hogares (ENAHO) del Instituto Nacional de Estadística e Informática (INEI) de Perú que se realiza cada año desde el 2004. Esta encuesta esta organizado por modulos.
 
-<a href="https://proyectos.inei.gob.pe/iinei/srienaho/Descarga/FichaTecnica/498-Ficha.pdf" target="_blank">Ficha técnica</a>
+> **Ficha técnica**: [Consulta aquí](https://proyectos.inei.gob.pe/iinei/srienaho/Descarga/FichaTecnica/498-Ficha.pdf)
+
+Contenido
+---------
+
+- [Modulos de la encuesta (Corte transversal)](#corte-transversal)
+- [Modulos de la encuesta (Datos de panel)](#datos-de-panel)
+- [I. Instalación](#i-instalacion)
+- [II. Descripción de la librería](#ii-descripción-de-la-libreria)
+- [III. Ejemplo](#iii-ejemplo-práctico)
+- [IV. Como citar este repositorio](#iv-como-citar-este-repositorio)
+- [Licencia](#licencia)
 
 ### Modulos de la Encuesta Nacional de Hogares (ENAHO)
 
@@ -244,6 +255,11 @@ Donde:
 ### Nota
 - Cuando se active la opción `panel=True`, tener en cuenta que los datasets tienen un peso considerable. El proceso sera el mismo, la diferencia se encuentra en el tamaño de los archivos que se descarán.
 - Otro aspecto a tener en cuenta, los códigos a usar para la función debe ser los que pertenecen a la tabla de datos de panel, considerando el periodo de tiempo que son vigentes los codigos a usar.
+
+## IV. Como citar este repositorio
+```plaintext
+Medrano M. & Palomino J. (2025). ENAHODATA (versión Python) [Software]. GitHub. (https://github.com/MaykolMedrano/enahodata_py)
+```
 
 ## Licencia
 
