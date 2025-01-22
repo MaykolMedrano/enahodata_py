@@ -5,6 +5,7 @@ import logging
 from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import shutil
+import pandas as pd  # <-- para la opción de cargar los .dta
 
 logging.basicConfig(
     level=logging.INFO,
@@ -49,6 +50,7 @@ YEAR_MAP_PANEL = {
     "2011": {"codigo": 302, "year": 2011},
 }
 
+
 def _download_and_extract_one(
     anio: str,
     modulo: str,
@@ -59,12 +61,20 @@ def _download_and_extract_one(
     verbose: bool,
     only_dta: bool,
     panel_code: int,
+    load_dta: bool = False,
 ):
     """
     Descarga un solo archivo (para un año y un módulo)
     usando el código dado (sea panel o corte transversal),
-    y opcionalmente lo descomprime.
+    y opcionalmente lo descomprime, elimina el .zip,
+    aplana la carpeta al extraer, y permite cargar los .dta.
+    
+    Retorna:
+    --------
+    - Si load_dta=True, retorna un diccionario { nombre_archivo: DataFrame, ... }
+    - De lo contrario, retorna None.
     """
+
     url = f"https://proyectos.inei.gob.pe/iinei/srienaho/descarga/STATA/{panel_code}-Modulo{modulo}.zip"
     zip_filename = f"modulo_{modulo}_{anio}.zip"
     zip_path = os.path.join(output_dir, zip_filename)
@@ -72,13 +82,12 @@ def _download_and_extract_one(
     if verbose:
         logging.info(f"Descargando módulo '{modulo}' para el año '{anio}'. URL: {url}")
 
-    # Verificar sobreescritura
     if os.path.isfile(zip_path) and not overwrite:
         if verbose:
             logging.info(f"Archivo '{zip_path}' ya existe y overwrite=False. No se descargará de nuevo.")
-        return
+        return None
 
-    # Descargar con barra de progreso
+    # -- Descargar con barra de progreso --
     try:
         with requests.get(url, stream=True) as r:
             if r.status_code == 200:
@@ -99,35 +108,67 @@ def _download_and_extract_one(
                 if verbose:
                     logging.info(f"Descarga exitosa: {zip_path}")
 
-                # Descomprimir si se solicita
+                # -- Descomprimir si se solicita --
                 if descomprimir:
-                    extract_dir = os.path.join(output_dir, f"modulo_{modulo}_{anio}_extract")
+                    # Directorio de extracción (uno por cada módulo+año, sin subcarpetas anidadas)
+                    extract_dir = os.path.join(output_dir, f"modulo_{modulo}_{anio}")
                     os.makedirs(extract_dir, exist_ok=True)
+
                     try:
                         with zipfile.ZipFile(zip_path, "r") as zip_ref:
-                            zip_ref.extractall(extract_dir)
+                            # Extraer "aplanando" la estructura (sin subcarpetas).
+                            for zinfo in zip_ref.infolist():
+                                if zinfo.is_dir():
+                                    # Omitir directorios
+                                    continue
+                                # Obtener sólo el nombre del archivo (sin ruta interna)
+                                filename = os.path.basename(zinfo.filename)
+                                if not filename:
+                                    # Si es carpeta vacía o ruta rara, ignorar
+                                    continue
+
+                                # Si se desea sólo .dta, omitimos otros archivos
+                                if only_dta and not filename.lower().endswith(".dta"):
+                                    continue
+
+                                # Ruta final (en la carpeta de extracción) sin subcarpetas
+                                final_path = os.path.join(extract_dir, filename)
+                                # Extraer el archivo manualmente
+                                with zip_ref.open(zinfo) as source, open(final_path, 'wb') as target:
+                                    shutil.copyfileobj(source, target)
+
                         if verbose:
-                            logging.info(f"Archivo descomprimido en: {extract_dir}")
+                            logging.info(f"Archivo descomprimido (aplanado) en: {extract_dir}")
 
-                        # Si se desea solo .dta
-                        if only_dta:
-                            dta_dir = os.path.join(output_dir, f"modulo_{modulo}_{anio}_dta_only")
-                            os.makedirs(dta_dir, exist_ok=True)
-                            for root, dirs, files in os.walk(extract_dir):
-                                for file in files:
-                                    if file.lower().endswith(".dta"):
-                                        source_file = os.path.join(root, file)
-                                        shutil.copy2(source_file, dta_dir)
+                        # -- Eliminar el .zip una vez descomprimido --
+                        os.remove(zip_path)
+                        if verbose:
+                            logging.info(f"Archivo .zip eliminado: {zip_path}")
 
-                            if verbose:
-                                logging.info(f"Archivos .dta copiados a: {dta_dir}")
+                        # -- Cargar los .dta si se pide --
+                        if load_dta:
+                            dta_dfs = {}
+                            for f in os.listdir(extract_dir):
+                                if f.lower().endswith(".dta"):
+                                    dta_path = os.path.join(extract_dir, f)
+                                    try:
+                                        df = pd.read_stata(dta_path)
+                                        dta_dfs[f] = df
+                                    except Exception as e:
+                                        logging.error(f"Error al cargar {dta_path}: {e}")
+                            return dta_dfs
 
                     except zipfile.BadZipFile:
                         logging.error(f"Error: el archivo '{zip_path}' no parece ser un ZIP válido.")
+                else:
+                    # Si no se descomprime, no cargamos nada
+                    return None
             else:
                 logging.error(f"Error al descargar {url}. Código de estado HTTP: {r.status_code}")
     except requests.exceptions.RequestException as e:
         logging.error(f"Error durante la conexión o la descarga: {e}")
+
+    return None
 
 
 def enahodata(
@@ -143,30 +184,47 @@ def enahodata(
     parallel_downloads: bool = False,
     max_workers: int = 4,
     only_dta: bool = False,
-    panel: bool = False
-) -> None:
+    panel: bool = False,
+    load_dta: bool = False,   # <-- nueva opción para cargar automáticamente los .dta
+):
     """
     Función principal para descargar módulos de la ENAHO 
     (corte transversal o panel, según 'panel=True').
-    
-    NOTA: 
-    - Se eliminó la opción 'condition'.
-    - Para panel=True NO se toman módulos por defecto. 
-      El usuario debe especificarlos en 'modulos'.
 
     Parámetros:
     -----------
     modulos : list[str]
         Lista de módulos (e.g. ["01","02"] para ENAHO regular, 
         ["1474","1475"] para ENAHO panel).
-        - Se exige que NO esté vacío, tanto para panel=True como panel=False.
+        - Se exige que NO esté vacío.
     anios : list[str]
         Lista de años (ej. ["2023","2022"]).
     panel : bool
         Si True, usa YEAR_MAP_PANEL (datos de panel).
         Si False, usa YEAR_MAP (corte transversal).
-    ...
+    descomprimir : bool
+        Si True, descomprime el .zip y lo elimina después.
+    only_dta : bool
+        Si True, extrae (o copia) únicamente los archivos .dta
+        y omite el resto.
+    load_dta : bool
+        Si True, carga los archivos .dta en memoria (pandas) y 
+        devuelve un diccionario. En caso de descargas múltiples, 
+        se devuelven todos en un solo dict.
+    
+    Otros parámetros:
+    -----------------
+    - place, preserve (no implementados en la lógica de Python).
+    - output_dir, overwrite, chunk_size, ...
+    - parallel_downloads, max_workers (para descargas en paralelo).
+    
+    Retorna:
+    --------
+    - Si load_dta=True, retorna un diccionario de diccionarios:
+        { (anio, modulo): { 'archivo1.dta': DataFrame, ... }, ... }
+    - Si load_dta=False, no retorna nada (None).
     """
+
     if preserve and verbose:
         logging.warning("Opción 'preserve' no aplicada en Python (solo demostración).")
 
@@ -182,8 +240,8 @@ def enahodata(
 
     # Validar que el usuario haya pasado 'modulos'
     if not modulos:
-        logging.error("Debes especificar al menos un módulo en 'modulos' (tanto para panel como para corte transversal).")
-        return
+        logging.error("Debes especificar al menos un módulo en 'modulos'.")
+        return None
 
     # Crear la carpeta de salida
     os.makedirs(output_dir, exist_ok=True)
@@ -196,14 +254,16 @@ def enahodata(
             continue
 
         code_inei = map_dict[anio]["codigo"]
-        # Agregar (anio, modulo, code) a la lista
         for m in modulos:
             tasks.append((anio, m, code_inei))
 
     if verbose:
         logging.info(f"Se procesarán {len(tasks)} descargas en total.")
 
-    # Descarga en paralelo o secuencial
+    # Si vamos a cargar .dta, almacenaremos los resultados aquí
+    all_dta_results = {} if load_dta else None
+
+    # Descarga paralela
     if parallel_downloads:
         if verbose:
             logging.info(f"Descarga en paralelo habilitada. Máximo de hilos: {max_workers}")
@@ -220,25 +280,44 @@ def enahodata(
                     descomprimir=descomprimir,
                     verbose=verbose,
                     only_dta=only_dta,
-                    panel_code=code
+                    panel_code=code,
+                    load_dta=load_dta
                 )
-                futures.append(fut)
-            # Esperar a que terminen
-            for future in as_completed(futures):
-                exc = future.exception()
-                if exc:
-                    logging.error(f"Ocurrió un error en la descarga: {exc}")
+                futures.append((anio, modulo, fut))
+
+            # Recoger resultados
+            for (anio, modulo, fut) in futures:
+                try:
+                    result = fut.result()
+                    if load_dta and result:
+                        # result es un dict { filename: DataFrame }
+                        all_dta_results[(anio, modulo)] = result
+                except Exception as e:
+                    logging.error(f"Ocurrió un error en la descarga del (año={anio}, módulo={modulo}): {e}")
+
     else:
         # Descarga secuencial
         for (anio, modulo, code) in tasks:
-            _download_and_extract_one(
-                anio=anio,
-                modulo=modulo,
-                output_dir=output_dir,
-                chunk_size=chunk_size,
-                overwrite=overwrite,
-                descomprimir=descomprimir,
-                verbose=verbose,
-                only_dta=only_dta,
-                panel_code=code
-            )
+            try:
+                result = _download_and_extract_one(
+                    anio=anio,
+                    modulo=modulo,
+                    output_dir=output_dir,
+                    chunk_size=chunk_size,
+                    overwrite=overwrite,
+                    descomprimir=descomprimir,
+                    verbose=verbose,
+                    only_dta=only_dta,
+                    panel_code=code,
+                    load_dta=load_dta
+                )
+                if load_dta and result:
+                    all_dta_results[(anio, modulo)] = result
+            except Exception as e:
+                logging.error(f"Ocurrió un error en la descarga del (año={anio}, módulo={modulo}): {e}")
+
+    # Si no se pidió cargar dta, no retornamos nada
+    if load_dta:
+        return all_dta_results
+    else:
+        return None
