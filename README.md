@@ -1,3 +1,12 @@
+
+
+[![Contributors][contributors-shield]][contributors-url]
+[![License][license-shield]][license-url]
+[![Stargazers][stars-shield]][stars-url]
+[![Forks][forks-shield]][forks-url]
+
+
+
 # ENAHODATA
 Esta libreria consta de un comando para extraer datos de la Encuesta Nacional de Hogares (ENAHO) del Instituto Nacional de Estadística e Informática (INEI) de Perú que se realiza cada año desde el 2004. Esta encuesta esta organizado por modulos.
 
@@ -264,3 +273,14 @@ Medrano M. & Palomino J. (2025). ENAHODATA (versión Python) [Software]. GitHub.
 ## Licencia
 
 Este repositorio esta autorizado bajo la licencia MIT. Ver <a href="./LICENSE">LICENCIA</a> para mas detalles.
+
+
+<!-- MARKDOWN LINKS & IMAGES -->
+[contributors-shield]: https://img.shields.io/github/contributors-anon/MaykolMedrano/enahodata_py
+[contributors-url]:https://github.com/MaykolMedrano/enahodata_py/graphs/contributors
+[forks-shield]:https://img.shields.io/github/forks/MaykolMedrano/enahodata_py
+[forks-url]: https://github.com/MaykolMedrano/enahodata_py/network/members
+[stars-shield]:https://img.shields.io/github/stars/MaykolMedrano/enahodata_py
+[stars-url]:https://github.com/MaykolMedrano/enahodata_py/stargazers
+[license-shield]: https://img.shields.io/github/license/MaykolMedrano/enahodata_py
+[license-url]: https://github.com/MaykolMedrano/enahodata_py/blob/master/LICENSE
