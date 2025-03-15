@@ -4,7 +4,7 @@
 [![License][license-shield]][license-url]
 [![Stargazers][stars-shield]][stars-url]
 [![Forks][forks-shield]][forks-url]
-
+[![DOI](https://zenodo.org/badge/911861535.svg)](https://doi.org/10.5281/zenodo.15029825)
 
 
 # ENAHODATA
