@@ -266,11 +266,8 @@ Donde:
 - Otro aspecto a tener en cuenta, los códigos a usar para la función debe ser los que pertenecen a la tabla de datos de panel, considerando el periodo de tiempo que son vigentes los codigos a usar.
 
 ## IV. Como citar este repositorio
-```plaintext
 
 Medrano, M., & Palomino, J. (2025). *ENAHODATA (versión 0.0.3) [Software]*. Zenodo. [https://doi.org/10.5281/zenodo.15029826](https://doi.org/10.5281/zenodo.15029826)
-
-```
 
 ## Licencia
 
