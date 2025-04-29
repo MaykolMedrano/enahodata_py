@@ -191,38 +191,61 @@ def enahodata(
     Función principal para descargar módulos de la ENAHO 
     (corte transversal o panel, según 'panel=True').
 
-    Parámetros:
-    -----------
+    Parameters
+    ----------
     modulos : list[str]
-        Lista de módulos (e.g. ["01","02"] para ENAHO regular, 
-        ["1474","1475"] para ENAHO panel).
-        - Se exige que NO esté vacío.
+        Lista de módulos a descargar. Ejemplo: ["01", "02"] (ENAHO regular)
+        o ["1474", "1475"] (panel). ¡No puede estar vacía!
     anios : list[str]
-        Lista de años (ej. ["2023","2022"]).
-    panel : bool
-        Si True, usa YEAR_MAP_PANEL (datos de panel).
-        Si False, usa YEAR_MAP (corte transversal).
-    descomprimir : bool
-        Si True, descomprime el .zip y lo elimina después.
-    only_dta : bool
-        Si True, extrae (o copia) únicamente los archivos .dta
-        y omite el resto.
-    load_dta : bool
-        Si True, carga los archivos .dta en memoria (pandas) y 
-        devuelve un diccionario. En caso de descargas múltiples, 
-        se devuelven todos en un solo dict.
-    
-    Otros parámetros:
-    -----------------
-    - place, preserve (no implementados en la lógica de Python).
-    - output_dir, overwrite, chunk_size, ...
-    - parallel_downloads, max_workers (para descargas en paralelo).
-    
-    Retorna:
+        Lista de años. Ejemplo: ["2023", "2022"].
+    panel : bool, optional
+        Si True, usa datos de panel (YEAR_MAP_PANEL). Si False, corte transversal (YEAR_MAP).
+        Por defecto: False.
+    descomprimir : bool, optional
+        Si True, descomprime el ZIP y lo elimina después.
+        Por defecto: True.
+    only_dta : bool, optional
+        Si True, solo extrae/copia archivos .dta (ignora otros formatos).
+        Por defecto: False.
+    load_dta : bool, optional
+        Si True, carga los archivos .dta en memoria (DataFrames de pandas) y retorna un diccionario.
+        Por defecto: False.
+    **kwargs
+        Parámetros adicionales:
+        - output_dir : str, optional
+            Directorio personalizado para guardar archivos.
+        - overwrite : bool, optional
+            Sobrescribir archivos existentes. Por defecto: False.
+        - chunk_size : int, optional
+            Tamaño de chunks para descargas (bytes). Por defecto: 8192.
+        - parallel_downloads : bool, optional
+            Descargas en paralelo. Por defecto: False.
+        - max_workers : int, optional
+            Número de hilos para descargas paralelas. Por defecto: 5.
+
+    Retorna
+    -------
+    dict | None
+        - Si `load_dta=True`: Retorna un diccionario anidado con la estructura:
+            ```python
+            {
+                ("2023", "01"): {
+                    "enaho_2023_01.dta": pd.DataFrame,
+                    ...
+                },
+                ...
+            }
+            ```
+        - Si `load_dta=False`: Retorna None.
+
+    Ejemplos
     --------
-    - Si load_dta=True, retorna un diccionario de diccionarios:
-        { (anio, modulo): { 'archivo1.dta': DataFrame, ... }, ... }
-    - Si load_dta=False, no retorna nada (None).
+    >>> datos = descargar_modulos(
+    ...     modulos=["01", "02"],
+    ...     anios=["2023"],
+    ...     load_dta=True
+    ... )
+    >>> datos[("2023", "01")].keys()  # Si load_dta = True, retorna diccionario de diccionarios
     """
 
     if preserve and verbose:
