@@ -5,7 +5,8 @@ import logging
 from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import shutil
-import pandas as pd  # <-- para la opción de cargar los .dta
+import time
+#import pandas as pd  # <-- para la opción de cargar los .dta
 
 logging.basicConfig(
     level=logging.INFO,
@@ -78,7 +79,7 @@ def _download_and_extract_one(
     url = f"https://proyectos.inei.gob.pe/iinei/srienaho/descarga/STATA/{panel_code}-Modulo{modulo}.zip"
     zip_filename = f"modulo_{modulo}_{anio}.zip"
     zip_path = os.path.join(output_dir, zip_filename)
-
+ 
     if verbose:
         logging.info(f"Descargando módulo '{modulo}' para el año '{anio}'. URL: {url}")
 
@@ -88,10 +89,13 @@ def _download_and_extract_one(
         return None
 
     # -- Descargar con barra de progreso --
+    #start_request = time.time()
     try:
-        with requests.get(url, stream=True) as r:
+        with requests.get(url, stream=True, timeout=4) as r:
             if r.status_code == 200:
                 total_size_in_bytes = int(r.headers.get('content-length', 0))
+                #end_request = time.time()
+                #logging.info(f"El request demoró {(end_request - start_request):.4f}s")
                 desc_tqdm = f"Descargando {os.path.basename(zip_path)}"
                 with open(zip_path, 'wb') as f, tqdm(
                     total=total_size_in_bytes,
@@ -147,6 +151,8 @@ def _download_and_extract_one(
 
                         # -- Cargar los .dta si se pide --
                         if load_dta:
+                            import pandas as pd
+                            
                             dta_dfs = {}
                             for f in os.listdir(extract_dir):
                                 if f.lower().endswith(".dta"):
@@ -174,17 +180,16 @@ def _download_and_extract_one(
 def enahodata(
     modulos: list[str],
     anios: list[str],
-    place: str = "",
-    preserve: bool = False,
     descomprimir: bool = False,
     output_dir: str = ".",
     overwrite: bool = False,
     chunk_size: int = 1024,
     verbose: bool = True,
     parallel_downloads: bool = False,
-    max_workers: int = 4,
+    max_workers: int = 5,
     only_dta: bool = False,
     panel: bool = False,
+    preserve: bool = False,
     load_dta: bool = False,   # <-- nueva opción para cargar automáticamente los .dta
 ):
     """
@@ -271,6 +276,10 @@ def enahodata(
 
     # Construir lista de tareas (año, módulo)
     tasks = []
+
+    if not all(isinstance(anio, str) for anio in anios):
+        anios = [str(anio) for anio in anios]
+
     for anio in anios:
         if anio not in map_dict:
             logging.error(f"El año {anio} no está en la tabla {'panel' if panel else 'corte transversal'}.")
