@@ -5,7 +5,8 @@ import logging
 from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import shutil
-import pandas as pd  # <-- para la opción de cargar los .dta
+import time
+#import pandas as pd  # <-- para la opción de cargar los .dta
 
 logging.basicConfig(
     level=logging.INFO,
@@ -78,7 +79,7 @@ def _download_and_extract_one(
     url = f"https://proyectos.inei.gob.pe/iinei/srienaho/descarga/STATA/{panel_code}-Modulo{modulo}.zip"
     zip_filename = f"modulo_{modulo}_{anio}.zip"
     zip_path = os.path.join(output_dir, zip_filename)
-
+ 
     if verbose:
         logging.info(f"Descargando módulo '{modulo}' para el año '{anio}'. URL: {url}")
 
@@ -88,10 +89,13 @@ def _download_and_extract_one(
         return None
 
     # -- Descargar con barra de progreso --
+    #start_request = time.time()
     try:
-        with requests.get(url, stream=True) as r:
+        with requests.get(url, stream=True, timeout=4) as r:
             if r.status_code == 200:
                 total_size_in_bytes = int(r.headers.get('content-length', 0))
+                #end_request = time.time()
+                #logging.info(f"El request demoró {(end_request - start_request):.4f}s")
                 desc_tqdm = f"Descargando {os.path.basename(zip_path)}"
                 with open(zip_path, 'wb') as f, tqdm(
                     total=total_size_in_bytes,
@@ -147,6 +151,8 @@ def _download_and_extract_one(
 
                         # -- Cargar los .dta si se pide --
                         if load_dta:
+                            import pandas as pd
+                            
                             dta_dfs = {}
                             for f in os.listdir(extract_dir):
                                 if f.lower().endswith(".dta"):
@@ -174,55 +180,77 @@ def _download_and_extract_one(
 def enahodata(
     modulos: list[str],
     anios: list[str],
-    place: str = "",
-    preserve: bool = False,
     descomprimir: bool = False,
     output_dir: str = ".",
     overwrite: bool = False,
     chunk_size: int = 1024,
     verbose: bool = True,
     parallel_downloads: bool = False,
-    max_workers: int = 4,
+    max_workers: int = 5,
     only_dta: bool = False,
     panel: bool = False,
+    preserve: bool = False,
     load_dta: bool = False,   # <-- nueva opción para cargar automáticamente los .dta
 ):
     """
     Función principal para descargar módulos de la ENAHO 
     (corte transversal o panel, según 'panel=True').
 
-    Parámetros:
-    -----------
+    Parameters
+    ----------
     modulos : list[str]
-        Lista de módulos (e.g. ["01","02"] para ENAHO regular, 
-        ["1474","1475"] para ENAHO panel).
-        - Se exige que NO esté vacío.
+        Lista de módulos a descargar. Ejemplo: ["01", "02"] (ENAHO regular)
+        o ["1474", "1475"] (panel). ¡No puede estar vacía!
     anios : list[str]
-        Lista de años (ej. ["2023","2022"]).
-    panel : bool
-        Si True, usa YEAR_MAP_PANEL (datos de panel).
-        Si False, usa YEAR_MAP (corte transversal).
-    descomprimir : bool
-        Si True, descomprime el .zip y lo elimina después.
-    only_dta : bool
-        Si True, extrae (o copia) únicamente los archivos .dta
-        y omite el resto.
-    load_dta : bool
-        Si True, carga los archivos .dta en memoria (pandas) y 
-        devuelve un diccionario. En caso de descargas múltiples, 
-        se devuelven todos en un solo dict.
-    
-    Otros parámetros:
-    -----------------
-    - place, preserve (no implementados en la lógica de Python).
-    - output_dir, overwrite, chunk_size, ...
-    - parallel_downloads, max_workers (para descargas en paralelo).
-    
-    Retorna:
+        Lista de años. Ejemplo: ["2023", "2022"].
+    panel : bool, optional
+        Si True, usa datos de panel (YEAR_MAP_PANEL). Si False, corte transversal (YEAR_MAP).
+        Por defecto: False.
+    descomprimir : bool, optional
+        Si True, descomprime el ZIP y lo elimina después.
+        Por defecto: True.
+    only_dta : bool, optional
+        Si True, solo extrae/copia archivos .dta (ignora otros formatos).
+        Por defecto: False.
+    load_dta : bool, optional
+        Si True, carga los archivos .dta en memoria (DataFrames de pandas) y retorna un diccionario.
+        Por defecto: False.
+    **kwargs
+        Parámetros adicionales:
+        - output_dir : str, optional
+            Directorio personalizado para guardar archivos.
+        - overwrite : bool, optional
+            Sobrescribir archivos existentes. Por defecto: False.
+        - chunk_size : int, optional
+            Tamaño de chunks para descargas (bytes). Por defecto: 8192.
+        - parallel_downloads : bool, optional
+            Descargas en paralelo. Por defecto: False.
+        - max_workers : int, optional
+            Número de hilos para descargas paralelas. Por defecto: 5.
+
+    Retorna
+    -------
+    dict | None
+        - Si `load_dta=True`: Retorna un diccionario anidado con la estructura:
+            ```python
+            {
+                ("2023", "01"): {
+                    "enaho_2023_01.dta": pd.DataFrame,
+                    ...
+                },
+                ...
+            }
+            ```
+        - Si `load_dta=False`: Retorna None.
+
+    Ejemplos
     --------
-    - Si load_dta=True, retorna un diccionario de diccionarios:
-        { (anio, modulo): { 'archivo1.dta': DataFrame, ... }, ... }
-    - Si load_dta=False, no retorna nada (None).
+    >>> datos = descargar_modulos(
+    ...     modulos=["01", "02"],
+    ...     anios=["2023"],
+    ...     load_dta=True
+    ... )
+    >>> datos[("2023", "01")].keys()  # Si load_dta = True, retorna diccionario de diccionarios
     """
 
     if preserve and verbose:
@@ -248,6 +276,10 @@ def enahodata(
 
     # Construir lista de tareas (año, módulo)
     tasks = []
+
+    if not all(isinstance(anio, str) for anio in anios):
+        anios = [str(anio) for anio in anios]
+
     for anio in anios:
         if anio not in map_dict:
             logging.error(f"El año {anio} no está en la tabla {'panel' if panel else 'corte transversal'}.")
