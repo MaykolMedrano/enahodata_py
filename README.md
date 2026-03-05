@@ -1,13 +1,19 @@
 
+<div align="center">
+  
+# enahodata_py
+  
+**Automated download and extraction of Peru's National Household Survey (ENAHO) with support for cross-sectional and panel data.**
 
-[![Contributors][contributors-shield]][contributors-url]
-[![License][license-shield]][license-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Forks][forks-shield]][forks-url]
 [![DOI](https://zenodo.org/badge/911861535.svg)](https://doi.org/10.5281/zenodo.15029825)
+[![PyPI version](https://img.shields.io/pypi/v/enahodata?style=flat-square&color=blue)](https://pypi.org/project/enahodata)
+[![Python](https://img.shields.io/badge/Python-3.7%2B-blue)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+</div>
 
-# ENAHODATA
+---
+
 Esta libreria consta de un comando para extraer datos de la Encuesta Nacional de Hogares (ENAHO) del Instituto Nacional de Estadística e Informática (INEI) de Perú que se realiza cada año desde el 2004. Esta encuesta esta organizado por modulos.
 
 > **Ficha técnica**: [Consulta aquí](https://proyectos.inei.gob.pe/iinei/srienaho/Descarga/FichaTecnica/498-Ficha.pdf)
@@ -36,7 +42,7 @@ Nro|Código Módulo|Modulo|Preguntas
 3|`03`|Educación|<a href="https://proyectos.inei.gob.pe/microdatos/Detalle_Encuesta.asp?CU=19558&CodEncuesta=906&CodModulo=03&NombreEncuesta=Condiciones+de+Vida+y+Pobreza+-+ENAHO&NombreModulo=Educación" target="_blank">`Preguntas`</a>
 4|`04`|Salud|<a href="https://proyectos.inei.gob.pe/microdatos/Detalle_Encuesta.asp?CU=19558&CodEncuesta=906&CodModulo=04&NombreEncuesta=Condiciones+de+Vida+y+Pobreza+-+ENAHO&NombreModulo=Salud" target="_blank">`Preguntas`</a>
 5|`05`|Empleo e Ingresos|<a href="https://proyectos.inei.gob.pe/microdatos/Detalle_Encuesta.asp?CU=19558&CodEncuesta=906&CodModulo=05&NombreEncuesta=Condiciones+de+Vida+y+Pobreza+-+ENAHO&NombreModulo=Empleo+e+Ingresos" target="_blank">`Preguntas`</a>
-6|`07`|	Gastos en Alimentos y Bebidas (Módulo 601)|<a href="https://proyectos.inei.gob.pe/microdatos/Detalle_Encuesta.asp?CU=19558&CodEncuesta=906&CodModulo=07&NombreEncuesta=Condiciones+de+Vida+y+Pobreza+-+ENAHO&NombreModulo=Gastos+en+Alimentos+y+Bebidas+(Módulo+601)" target="_blank">`Preguntas`</a>
+6|`07`| Gastos en Alimentos y Bebidas (Módulo 601)|<a href="https://proyectos.inei.gob.pe/microdatos/Detalle_Encuesta.asp?CU=19558&CodEncuesta=906&CodModulo=07&NombreEncuesta=Condiciones+de+Vida+y+Pobreza+-+ENAHO&NombreModulo=Gastos+en+Alimentos+y+Bebidas+(Módulo+601)" target="_blank">`Preguntas`</a>
 7|`08`|Instituciones Beneficas|<a href="https://proyectos.inei.gob.pe/microdatos/Detalle_Encuesta.asp?CU=19558&CodEncuesta=906&CodModulo=08&NombreEncuesta=Condiciones+de+Vida+y+Pobreza+-+ENAHO&NombreModulo=Instituciones+Beneficas" target="_blank">`Preguntas`</a>
 8|`09`|Mantenimiento de la Vivienda|<a href="https://proyectos.inei.gob.pe/microdatos/Detalle_Encuesta.asp?CU=19558&CodEncuesta=906&CodModulo=09&NombreEncuesta=Condiciones+de+Vida+y+Pobreza+-+ENAHO&NombreModulo=Mantenimiento+de+la+Vivienda" target="_blank">`Preguntas`</a>
 9|`10`|Transportes y Comunicaciones|<a href="https://proyectos.inei.gob.pe/microdatos/Detalle_Encuesta.asp?CU=19558&CodEncuesta=906&CodModulo=10&NombreEncuesta=Condiciones+de+Vida+y+Pobreza+-+ENAHO&NombreModulo=Transportes+y+Comunicaciones" target="_blank">`Preguntas`</a>
@@ -72,26 +78,29 @@ Nro|Año|Código Módulo|Modulo
 4|2023-2018|`1477`|Empleo e Ingresos
 5|2023-2018|`1478`|Sumarias ( Variables Calculadas )
 6|2023-2018|`1479`|Características de los Miembros del Hogar
-7|2017-2011|`01`|Características de la Vivienda y del Hogar	
+7|2017-2011|`01`|Características de la Vivienda y del Hogar 
 8|2017-2011|`03`|Educación
 9|2017-2011|`04`|Salud
 10|2017-2011|`05`|Empleo e Ingresos
 11|2017-2011|`34`|Sumarias( Variables calculadas )
 12|2017-2011|`1314`|Características de los Miembros del Hogar
+
 ## I. Instalacion
 
 #### Requerimientos
+
 Para el correcto funcionamiento del paquete y sus respectivos modulos, es necesario tener instalado los siguientes paquetes adicionales:
 
 - requests
 - tqdm
 
 #### Iniciamos la instalacion
+
 ```python
 pip install enahodata
 ```
 
-## II. Descripción de la libreria 
+## II. Descripción de la libreria
 
 #### 1.- Importamos la libreria
 
@@ -104,13 +113,17 @@ import os
 - También importamos **os** para manejar las carpetas.
 
 #### 2.- Definimos el directorio de trabajo
+
 ```python
 os.chdir("/path/to/your/directory")
 ```
+
 - Usamos este código para definir el directorio de trabajo donde se trabajará.
 
 #### 3.- Definimos los paramétros del comando **_enahodata_**
+
 El comando es enahodata, y tiene los siguientes parametros:
+
 ```python
 enahodata(
     modulos: list[str]=["", "", "", ...],
@@ -122,7 +135,9 @@ enahodata(
     panel: bool = True or False
 )
 ```
+
 - **modulos:** en este parámetro ponemos la lista de modulos que se quiere descargar. Se puede extraer el codigo de la columna _Código Módulo_.
+
 ```python
 enahodata(
     modulos = ["01", "02", "03",...],
@@ -131,6 +146,7 @@ enahodata(
 ```
 
 - **anios:** en este parámetro se pone la lista de años.
+
 ```python
 enahodata(
     ...
@@ -138,7 +154,9 @@ enahodata(
     ...
 )
 ```
+
 - **descomprimir:** con esta opción se selecciona _True_ o _False_ para que se descomprima o no, respectivamente.
+
 ```python
 enahodata(
     ...
@@ -146,7 +164,9 @@ enahodata(
     ...
 )
 ```
+
 - **only_data:** con este parametro del comando seleccionamos si se enfocara solo en los archivos _.dta_ o no. Tiene dos valores _True_ o _False_.
+
 ```python
 enahodata(
     ...
@@ -154,7 +174,9 @@ enahodata(
     ...
 )
 ```
+
 - **overwrite:** con esta opción se indica si se reemplaza los archivos ya existentes o no. Tiene dos valores _True_ o _False_.
+
 ```python
 enahodata(
     ...
@@ -162,7 +184,9 @@ enahodata(
     ...
 )
 ```
-- **output_dir:** con este parámetro se indica el nombre que tendra la carpeta donde se almacenaran los archivos de los modulos descargados de la ENAHO. 
+
+- **output_dir:** con este parámetro se indica el nombre que tendra la carpeta donde se almacenaran los archivos de los modulos descargados de la ENAHO.
+
 ```python
 enahodata(
     ...
@@ -170,14 +194,14 @@ enahodata(
 )
 ```
 
-- **panel:** con este parámetro se indica si se descargará los datasets de corte transversal o los de panel data. Tiene dos valores _True_ (datos de panel) y _False_ (corte transversal). 
+- **panel:** con este parámetro se indica si se descargará los datasets de corte transversal o los de panel data. Tiene dos valores _True_ (datos de panel) y _False_ (corte transversal).
+
 ```python
 enahodata(
     ...
     panel: bool = ...,   
 )
 ```
-
 
 #### 4.- Plantilla completa
 
@@ -202,20 +226,25 @@ enahodata(
 ## III. Ejemplo práctico
 
 Se necesita descargar de los años 2022 y 2023, los siguientes módulos de la Encuesta Nacional de Hogares de Perú:
+
 - Características de la Vivienda y del Hogar
-- Educación 
+- Educación
 - Salud
 
 Entonces, con la información anterior revisamos el codigo de cada modulo. En este caso los codigos son los siguientes:
+
 - `01` : Características de la vivienda y del hogar
 - `03` : Educación
 - `04` : Salud
 
 Luego, realizamos lo siguiente:
+
 ```python
 pip install enahodata
 ```
+
 En otro archivo `ejemplo.py`, por ejemplo escribimos el siguiente código:
+
 ```python
 from enahodata import enahodata
 import os
@@ -233,10 +262,13 @@ enahodata(
 )
 
 ```
+
 Ejecutamos el codigo:
+
 ```python
 python ejemplo.py
 ```
+
 ![enahodata](./img/resultados.PNG)
 
 Y se creara la siguiente estructura de carpetas, como resultado:
@@ -244,42 +276,36 @@ Y se creara la siguiente estructura de carpetas, como resultado:
 <img src="./img/tree.PNG" width="210" height="">
 
 Donde:
-- **/modulo_01_2022_dta_only** 
-- **/modulo_01_2023_dta_only** 
-- **/modulo_03_2022_dta_only** 
-- **/modulo_03_2023_dta_only** 
-- **/modulo_04_2022_dta_only** 
-- **/modulo_04_2023_dta_only** 
+
+- **/modulo_01_2022_dta_only**
+- **/modulo_01_2023_dta_only**
+- **/modulo_03_2022_dta_only**
+- **/modulo_03_2023_dta_only**
+- **/modulo_04_2022_dta_only**
+- **/modulo_04_2023_dta_only**
+
 >Son las carpetas donde se encuentran los dataset en formato `.dta`
 
-- **/modulo_01_2022_extract** 
-- **/modulo_01_2023_extract** 
-- **/modulo_03_2022_extract** 
-- **/modulo_03_2023_extract** 
-- **/modulo_04_2022_extract** 
-- **/modulo_04_2023_extract** 
+- **/modulo_01_2022_extract**
+- **/modulo_01_2023_extract**
+- **/modulo_03_2022_extract**
+- **/modulo_03_2023_extract**
+- **/modulo_04_2022_extract**
+- **/modulo_04_2023_extract**
 
 >En estas carpetas se encuentran, la información descomprimida de la ENAHO, con toda la información que viene desde el portal de microdatos del INEI.
 
 ### Nota
+
 - Cuando se active la opción `panel=True`, tener en cuenta que los datasets tienen un peso considerable. El proceso sera el mismo, la diferencia se encuentra en el tamaño de los archivos que se descarán.
 - Otro aspecto a tener en cuenta, los códigos a usar para la función debe ser los que pertenecen a la tabla de datos de panel, considerando el periodo de tiempo que son vigentes los codigos a usar.
 
 ## IV. Como citar este repositorio
 
-Medrano, M., & Palomino, J. (2025). *ENAHODATA (versión 0.0.3) [Software]*. Zenodo. [https://doi.org/10.5281/zenodo.15029826](https://doi.org/10.5281/zenodo.15029826)
+Medrano, M., & Palomino, J. (2025). _ENAHODATA (versión 0.0.3) [Software]_. Zenodo. [https://doi.org/10.5281/zenodo.15029826](https://doi.org/10.5281/zenodo.15029826)
 
 ## Licencia
 
 Este repositorio esta autorizado bajo la licencia MIT. Ver <a href="./LICENSE">LICENCIA</a> para mas detalles.
 
-
 <!-- MARKDOWN LINKS & IMAGES -->
-[contributors-shield]: https://img.shields.io/github/contributors-anon/MaykolMedrano/enahodata_py
-[contributors-url]:https://github.com/MaykolMedrano/enahodata_py/graphs/contributors
-[forks-shield]:https://img.shields.io/github/forks/MaykolMedrano/enahodata_py
-[forks-url]: https://github.com/MaykolMedrano/enahodata_py/network/members
-[stars-shield]:https://img.shields.io/github/stars/MaykolMedrano/enahodata_py
-[stars-url]:https://github.com/MaykolMedrano/enahodata_py/stargazers
-[license-shield]: https://img.shields.io/github/license/MaykolMedrano/enahodata_py
-[license-url]: https://github.com/MaykolMedrano/enahodata_py/blob/master/LICENSE
