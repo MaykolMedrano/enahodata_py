@@ -7,9 +7,9 @@
 
 [![DOI](https://zenodo.org/badge/911861535.svg)](https://doi.org/10.5281/zenodo.15029825)
 [![PyPI version](https://img.shields.io/pypi/v/enahodata?style=flat-square&color=blue)](https://pypi.org/project/enahodata)
-[![Python](https://img.shields.io/badge/Python-3.7%2B-blue)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
+[![Python](https://img.shields.io/badge/Python-3.7%2B-blue?style=flat-square)](https://www.python.org/)
+[![Stars](https://img.shields.io/github/stars/MaykolMedrano/enahodata_py?style=flat-square&color=blue)](https://github.com/MaykolMedrano/enahodata_py/stargazers)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 </div>
 
 ---
@@ -78,7 +78,7 @@ Nro|Año|Código Módulo|Modulo
 4|2023-2018|`1477`|Empleo e Ingresos
 5|2023-2018|`1478`|Sumarias ( Variables Calculadas )
 6|2023-2018|`1479`|Características de los Miembros del Hogar
-7|2017-2011|`01`|Características de la Vivienda y del Hogar 
+7|2017-2011|`01`|Características de la Vivienda y del Hogar
 8|2017-2011|`03`|Educación
 9|2017-2011|`04`|Salud
 10|2017-2011|`05`|Empleo e Ingresos
